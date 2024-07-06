@@ -1,4 +1,6 @@
+"use client";
 import Link from "next/link";
+
 import React from "react";
 
 const SigninForm = () => {
@@ -15,9 +17,7 @@ const SigninForm = () => {
         <input type="password" className="w-full border border-gray-300 px-3 py-2 text-gray-500 focus:outline-none text-sm" placeholder="Password" />
       </div>
       <div className="w-full">
-        <Link href="/dashboard" className="w-full block text-center px-8 py-2 bg-blue-400 text-white font-medium rounded-lg">
-          Log in
-        </Link>
+        <button className="w-full block text-center px-8 py-2 bg-blue-400 text-white font-medium rounded-lg">Log in</button>
       </div>
     </form>
   );
