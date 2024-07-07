@@ -28,7 +28,7 @@ const listItems = [
 
 const Sidebar = () => {
   return (
-    <div className="fixed top-0 flex flex-col space-y-6 w-[280px] min-w-[250px] border-r min-h-screen px-10 py-8">
+    <div className="hidden lg:fixed lg:top-0 lg:flex lg:flex-col lg:space-y-6 w-[280px] min-w-[250px] border-r min-h-screen px-10 py-8">
       <Link href="/dashboard">
         <Image src="/logo-text.png" alt="instagram logo" width={200} height={200} className="w-28 lg:w-32 inline-block" />
       </Link>
@@ -45,7 +45,7 @@ const Sidebar = () => {
         <div className="py-4">
           <button
             onClick={() => signOut({ callbackUrl: "/", redirect: true })}
-            className="flex items-center gap-2 px-6 py-2 hover:bg-gray-100 rounded-lg border border-gray-200 transition-all "
+            className="flex items-center gap-2 px-12 py-2 hover:bg-gray-100 rounded-lg border border-gray-200 transition-all "
           >
             {" "}
             <span>

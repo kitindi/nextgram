@@ -35,7 +35,7 @@ export default function Home() {
           <div className="px-12">
             <button
               onClick={() => signIn("nextgram", { callbackUrl: "/dashboard" })}
-              className="w-full  flex flex-row text-center gap-3 px-8 py-2 bg-white text-slate-600 font-medium rounded-lg border border-neutral-400"
+              className="w-full  flex flex-row text-center justify-center gap-3 px-8 py-2 bg-white text-slate-600 font-medium rounded-lg border border-neutral-400"
             >
               <Image src={glogo} width={1000} height={1000} className="max-w-6" alt="google logo" />
               Sign in with Google

@@ -5,14 +5,14 @@ export default function DashboardLayout({
   children, // will be a page or nested layout
 }) {
   return (
-    <section className="flex items-start justify-between">
+    <section className="flex items-start justify-between px-4 lg:px-12">
       <Sidebar />
-      <main className="pl-[280px] w-full h-full">
+      <main className="lg:pl-[280px] w-full h-full">
         {" "}
         <Header />
-        <div className="grid grid-cols-12 lg:px-16 lg:py-4 ">
-          <div className="col-span-9">{children}</div>
-          <div className="col-span-3">
+        <div className="lg:grid lg:grid-cols-12 lg:gap-16 lg:px-16  ">
+          <div className="w-full lg:col-span-9 lg:px-8">{children}</div>
+          <div className="lg:col-span-3 hidden lg:block">
             <h3 className="text-neutral-500 text-sm">Suggested for you</h3>
           </div>
         </div>
