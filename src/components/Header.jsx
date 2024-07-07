@@ -7,15 +7,19 @@ import Modal from "react-modal";
 import { useSession, signOut } from "next-auth/react";
 import { app } from "@/firebase";
 import { getDownloadURL, getStorage, ref, uploadBytesResumable } from "firebase/storage";
+import { addDoc, collection, getFirestore, serverTimestamp } from "firebase/firestore";
 
 const Header = () => {
   const [isOpen, setIsOpen] = useState(false);
   const [selectedFile, setSelectedFile] = useState(null);
+  const [caption, setCaption] = useState("");
   const [imageFileUrl, setImageFileUrl] = useState(null);
   const [imageFileUploading, setImageFileUploading] = useState(false);
+  const [postUploading, setPostUploading] = useState(false);
   const { data: session } = useSession();
 
   const filePickerRef = useRef(null);
+  const db = getFirestore(app);
 
   const addImageToPost = (e) => {
     const file = e.target.files[0];
@@ -63,6 +67,21 @@ const Header = () => {
     );
   };
 
+  // uploading image and caption to the firestore database
+
+  const handleSubmit = async () => {
+    setPostUploading(true);
+    const docRef = await addDoc(collection(db, "posts"), {
+      username: session.user.username,
+      caption: caption,
+      profileImage: session.user.image,
+      image: imageFileUrl,
+      timestamp: serverTimestamp(),
+    });
+
+    setPostUploading(false);
+    setIsOpen(false);
+  };
   return (
     <div className=" grid grid-cols-12 lg:gap-16 lg:px-16 lg:py-4 items-center ">
       <div className="col-span-9 flex items-center space-x-4 lg:px-8">
@@ -144,10 +163,18 @@ const Header = () => {
           <input
             type="text"
             maxLength="150"
+            value={caption}
+            onChange={(e) => setCaption(e.target.value)}
             placeholder="Enter your caption ...."
             className=" border border-gray-300 text-center w-full py-2 focus:outline-none text-sm"
           />
-          <button className="w-full bg-emerald-500 text-white rounded-lg disabled:bg-gray-500 disabled:cursor-not-allowed mt-2 py-2 ">Upload Post</button>
+          <button
+            onClick={handleSubmit}
+            disabled={!selectedFile || caption.trim() === "" || postUploading || imageFileUploading}
+            className="w-full bg-emerald-500 text-white rounded-lg disabled:bg-gray-500 disabled:cursor-not-allowed mt-2 py-2 "
+          >
+            Upload Post
+          </button>
           <div className="absolute top-2 right-2 cursor-pointer" onClick={() => setIsOpen(false)}>
             <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" fill="#000000" viewBox="0 0 256 256">
               <path d="M205.66,194.34a8,8,0,0,1-11.32,11.32L128,139.31,61.66,205.66a8,8,0,0,1-11.32-11.32L116.69,128,50.34,61.66A8,8,0,0,1,61.66,50.34L128,116.69l66.34-66.35a8,8,0,0,1,11.32,11.32L139.31,128Z"></path>
