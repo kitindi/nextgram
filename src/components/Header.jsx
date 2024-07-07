@@ -1,14 +1,67 @@
 "use client";
 import Image from "next/image";
-import React, { useState } from "react";
+import React, { useState, useRef, useEffect } from "react";
 import instalogo from "../../public/logo.svg";
 import Link from "next/link";
 import Modal from "react-modal";
 import { useSession, signOut } from "next-auth/react";
+import { app } from "@/firebase";
+import { getDownloadURL, getStorage, ref, uploadBytesResumable } from "firebase/storage";
 
 const Header = () => {
   const [isOpen, setIsOpen] = useState(false);
+  const [selectedFile, setSelectedFile] = useState(null);
+  const [imageFileUrl, setImageFileUrl] = useState(null);
+  const [imageFileUploading, setImageFileUploading] = useState(false);
   const { data: session } = useSession();
+
+  const filePickerRef = useRef(null);
+
+  const addImageToPost = (e) => {
+    const file = e.target.files[0];
+    if (file) {
+      setSelectedFile(file);
+      setImageFileUrl(URL.createObjectURL(file));
+      console.log(file);
+    }
+  };
+
+  // uploading an image to firebase storage
+
+  useEffect(() => {
+    if (selectedFile) {
+      uploadImageToStorage();
+    }
+  }, [selectedFile]);
+
+  const uploadImageToStorage = async () => {
+    setImageFileUploading(true);
+    const storage = getStorage(app);
+    const fileName = new Date().getTime() + "-" + selectedFile.name;
+
+    const storageRef = ref(storage, fileName);
+    const uploadTask = uploadBytesResumable(storageRef, selectedFile);
+
+    uploadTask.on(
+      "state_changed",
+      (snapshot) => {
+        const progress = (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
+        console.log("Upload is" + progress + "% done");
+      },
+      (error) => {
+        console.log(error);
+        setImageFileUploading(false);
+        setImageFileUrl(null);
+        setSelectedFile(null);
+      },
+      () => {
+        getDownloadURL(uploadTask.snapshot.ref).then((downloadURL) => {
+          setImageFileUrl(downloadURL);
+          setImageFileUploading(false);
+        });
+      }
+    );
+  };
 
   return (
     <div className=" grid grid-cols-12 lg:gap-16 lg:px-16 lg:py-4 items-center ">
@@ -60,14 +113,33 @@ const Header = () => {
       {isOpen && (
         <Modal
           isOpen={isOpen}
-          className="max-w-xl w-[90%] p-6 lg:ml-[8%]  absolute top-56 left-[5%] lg:lef-[20%] lg:translate-x-[50%] bg-white border-2 rounded-md shadow-md"
+          className="max-w-xl w-[90%] p-6 lg:ml-[8%]  absolute top-48 left-[5%] lg:lef-[20%] lg:translate-x-[50%] bg-white border-2 rounded-md shadow-md"
           onRequestClose={() => setIsOpen(false)}
           ariaHideApp={false}
         >
           <div className="flex flex-col justify-center items-center h-[100%] mb-4">
-            <svg xmlns="http://www.w3.org/2000/svg" className="w-10 h-10 cursor-pointer" fill="#000000" viewBox="0 0 256 256">
-              <path d="M208,56H180.28L166.65,35.56A8,8,0,0,0,160,32H96a8,8,0,0,0-6.65,3.56L75.71,56H48A24,24,0,0,0,24,80V192a24,24,0,0,0,24,24H208a24,24,0,0,0,24-24V80A24,24,0,0,0,208,56Zm-44,76a36,36,0,1,1-36-36A36,36,0,0,1,164,132Z"></path>
-            </svg>
+            {selectedFile ? (
+              <Image
+                src={imageFileUrl}
+                alt="Selected file"
+                className={`h-72 w-full max-h-[300px] object-contain cursor-pointer ${imageFileUploading ? "animate-pulse" : ""}`}
+                width={1000}
+                height={1000}
+                onClick={() => setSelectedFile(null)}
+              />
+            ) : (
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                className="w-10 h-10 cursor-pointer"
+                fill="#000000"
+                viewBox="0 0 256 256"
+                onClick={() => filePickerRef.current.click()}
+              >
+                <path d="M208,56H180.28L166.65,35.56A8,8,0,0,0,160,32H96a8,8,0,0,0-6.65,3.56L75.71,56H48A24,24,0,0,0,24,80V192a24,24,0,0,0,24,24H208a24,24,0,0,0,24-24V80A24,24,0,0,0,208,56Zm-44,76a36,36,0,1,1-36-36A36,36,0,0,1,164,132Z"></path>
+              </svg>
+            )}
+
+            <input type="file" hidden ref={filePickerRef} accept="image/*" onChange={addImageToPost} />
           </div>
           <input
             type="text"
@@ -88,3 +160,5 @@ const Header = () => {
 };
 
 export default Header;
+
+// <Image src={imageFileUrl} alt="Selected file" className="h-72 w-full max-h-[300px] object-contain cursor-pointer" width={1000} height={1000} onClick={()=>setSelectedFile(null)}/>
