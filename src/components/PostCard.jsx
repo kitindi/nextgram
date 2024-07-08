@@ -1,5 +1,6 @@
 import Image from "next/image";
 import React from "react";
+import LikesSection from "./LikesSection";
 
 const PostCard = ({ post }) => {
   return (
@@ -13,8 +14,11 @@ const PostCard = ({ post }) => {
           </svg>
         </span>
       </div>
-      <Image src={post.image} alt={post.caption} className="w-full object-cover w-full" width={1000} height={1000} />
-      <p className="text-sm font-regular p-5 trancate">
+      <Image src={post.image} alt={post.caption} className="object-cover w-full" width={1000} height={1000} />
+
+      {/* likes esction */}
+      <LikesSection id={post.id} />
+      <p className="text-sm font-regular trancate">
         <span className="text-sm font-semibold mr-2">{post.username}</span>
         {post.caption}
       </p>
