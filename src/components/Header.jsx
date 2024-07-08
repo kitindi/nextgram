@@ -81,6 +81,11 @@ const Header = () => {
 
     setPostUploading(false);
     setIsOpen(false);
+    setCaption("");
+    setImageFileUrl("");
+    // refresh the page after successful post upload
+
+    location.reload();
   };
   return (
     <div className=" grid grid-cols-12 lg:gap-16 lg:px-16 lg:py-4 items-center ">

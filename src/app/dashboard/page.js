@@ -1,8 +1,12 @@
-"use client";
+import Posts from "@/components/Posts";
 import React from "react";
 
 const Dashboard = () => {
-  return <div>Home page</div>;
+  return (
+    <div>
+      <Posts />
+    </div>
+  );
 };
 
 export default Dashboard;
