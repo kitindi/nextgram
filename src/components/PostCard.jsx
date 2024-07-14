@@ -1,6 +1,7 @@
 import Image from "next/image";
 import React from "react";
 import LikesSection from "./LikesSection";
+import CommentSection from "./CommentSection";
 
 const PostCard = ({ post }) => {
   return (
@@ -18,10 +19,11 @@ const PostCard = ({ post }) => {
 
       {/* likes esction */}
       <LikesSection id={post.id} />
-      <p className="text-sm font-regular trancate">
-        <span className="text-sm font-semibold mr-2">{post.username}</span>
+      <p className="text-sm font-regular trancate pb-4">
+        <span className="text-sm font-semibold mr-2 ">{post.username}</span>
         {post.caption}
       </p>
+      <CommentSection id={post.id} />
     </div>
   );
 };
